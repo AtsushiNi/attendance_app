@@ -17,3 +17,4 @@ AWSで作ってみた勤怠管理アプリ
 - グルーピング
   - グループの中で承認する/されるユーザーを定義する
 ![image](group_image.png)
+<img src="group_image.png" width="70%">
