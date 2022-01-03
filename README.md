@@ -2,4 +2,4 @@
 AWSで作ってみた勤怠管理アプリ
 
 # アーキテクチャ
-![image](architecture_image.png)
+![image](architecture_picture.png)
