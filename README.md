@@ -16,5 +16,4 @@ AWSで作ってみた勤怠管理アプリ
   - 上司に申請を要求、部下の申請を承認/修正要請
 - グルーピング
   - グループの中で承認する/されるユーザーを定義する
-![image](group_image.png)
-<img src="group_image.png" width="70%">
+<img src="group_image.png" width="50%">
