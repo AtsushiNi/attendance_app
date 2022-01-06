@@ -21,3 +21,6 @@ AWSで作ってみた勤怠管理アプリ
 ## 画面デザイン
 <img src="design1.png" width="50%"><img src="design2.png" width="50%">
 <img src="design3.png" width="50%"><img src="design4.png" width="50%">
+
+## モデル設計
+![sequence dialog](http://www.plantuml.com/plantuml/proxy?src=https://gist.githubusercontent.com/takke/995d474a8ad72a724c8187cf21b1e238/raw)
