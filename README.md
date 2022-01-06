@@ -19,7 +19,7 @@ AWSで作ってみた勤怠管理アプリ
 <img src="group_image.png" width="50%">
 
 ## 画面デザイン
-<img srrc="design1.png" width="50%">
-<img srrc="design2.png" width="50%">
-<img srrc="design3.png" width="50%">
-<img srrc="design4.png" width="50%">
+<img src="design1.png" width="50%">
+<img src="design2.png" width="50%">
+<img src="design3.png" width="50%">
+<img src="design4.png" width="50%">
