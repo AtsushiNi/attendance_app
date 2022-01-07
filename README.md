@@ -23,4 +23,7 @@ AWSで作ってみた勤怠管理アプリ
 <img src="design3.png" width="50%"><img src="design4.png" width="50%">
 
 ## モデル設計
+dynamoDBのベストプラクティスは難しいから、RDB的な設計にする
+データ数が少ないのでN+1問題は無視
+
 ![sequence dialog](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/AtsushiNi/attendance_app/main/ER_image.txt)

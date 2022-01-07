@@ -1,3 +1,57 @@
 @startuml
-APIGateway -> lambda
+Class User {
+  Number id
+  String first_name
+  String last_name
+  String e_mail
+  Number phone_number
+  String work_type
+  Boolean is_admin
+}
+Class Group {
+  Number id
+  String name
+}
+Class Attendance {
+  Number id
+  Number start_at
+  Number end_at
+  String status
+  Number created_at
+  Number updated_at
+}
+Class Application {
+  Number id
+  String type
+  Number before_start_at
+  Number before_end_at
+  Number after_start_at
+  Number after_end_at
+  Number created_at
+  Number approved_at
+  Number rejected_at
+  String status
+  String reason
+}
+
+Class UserGroupGeneral {
+  Number id
+  Number user_id
+  Number group_id
+}
+User "1" -- "n" UserGroupGeneral
+UserGroupGeneral "n" -- "1" Group
+
+Class UserGroupAdmin {
+  Number id
+  Number user_id
+  Number goup_id
+}
+User "1" -- "n" UserGroupAdmin
+UserGroupAdmin "n" -- "1" Group
+
+User "1" -- "n" Attendance
+Attendance "1" -- "n" Application
+User "1" -- "n" Application : approved user
+
 @enduml
