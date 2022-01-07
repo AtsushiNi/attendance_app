@@ -4,7 +4,7 @@ AWSで作ってみた勤怠管理アプリ
 ## アーキテクチャ
 - AWSを使ったサーバーレスWebアプリ
 - 簡単にしたいのでAPI Gatewayとlambdaを使用
-![image](aws_architecture_image.png)
+![image](readme/aws_architecture_image.png)
 
 - 構成図作成サイト：https://app.diagrams.net/
 
@@ -16,14 +16,14 @@ AWSで作ってみた勤怠管理アプリ
   - 上司に申請を要求、部下の申請を承認/修正要請
 - グルーピング
   - グループの中で承認する/されるユーザーを定義する
-<img src="group_image.png" width="50%">
+<img src="readme/group_image.png" width="50%">
 
 ## 画面デザイン
-<img src="design1.png" width="50%"><img src="design2.png" width="50%">
-<img src="design3.png" width="50%"><img src="design4.png" width="50%">
+<img src="readme/design1.png" width="50%"><img src="readme/design2.png" width="50%">
+<img src="readme/design3.png" width="50%"><img src="readme/design4.png" width="50%">
 
 ## モデル設計
-dynamoDBのベストプラクティスは難しいから、RDB的な設計にする
+dynamoDBのベストプラクティスは難しいから、RDB的な設計にする<br>
 データ数が少ないのでN+1問題は無視
 
-![sequence dialog](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/AtsushiNi/attendance_app/main/ER_image.txt)
+![sequence dialog](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/AtsushiNi/attendance_app/main/readme/ER_image.txt)
