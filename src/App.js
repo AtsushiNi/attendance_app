@@ -1,7 +1,11 @@
 import React from 'react'
 import './App.css';
 import { Authenticator } from '@aws-amplify/ui-react'
+import { Admin, Resource, ListGuesser } from 'react-admin'
+import jsonServerProvider from 'ra-data-json-server'
 import '@aws-amplify/ui-react/styles.css'
+
+const dataProvider = jsonServerProvider('https://jsonplaceholder.typicode.com')
 
 function App() {
   return (
@@ -9,7 +13,9 @@ function App() {
       <Authenticator variation='modal'>
         {({ signOut, user  }) => (
           <main>
-            <h1>Herro {user.username}</h1>
+            <Admin dataProvider={dataProvider}>
+              <Resource name="users" list={ListGuesser} />
+            </Admin>
             <button onClick={signOut}>Sign out</button>
           </main>
         )}

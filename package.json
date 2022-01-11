@@ -8,7 +8,10 @@
     "@testing-library/react": "^12.0.0",
     "@testing-library/user-event": "^13.2.1",
     "aws-amplify": "^4.3.12",
+    "prop-types": "^15.8.1",
+    "ra-data-json-server": "^3.19.6",
     "react": "^17.0.2",
+    "react-admin": "^3.19.6",
     "react-dom": "^17.0.2",
     "react-scripts": "5.0.0",
     "web-vitals": "^2.1.0"
