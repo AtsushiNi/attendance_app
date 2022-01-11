@@ -1,0 +1,10 @@
+{
+  "resourceName": "AttendanceAppUsersTable",
+  "tableName": "AttendanceAppUsersTable",
+  "partitionKey": {
+    "fieldName": "id",
+    "fieldType": "number"
+  },
+  "gsi": [],
+  "triggerFunctions": []
+}

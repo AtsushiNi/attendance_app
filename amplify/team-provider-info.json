@@ -9,11 +9,18 @@
       "UnauthRoleName": "amplify-attendanceapp-dev-235325-unauthRole",
       "StackName": "amplify-attendanceapp-dev-235325",
       "StackId": "arn:aws:cloudformation:ap-northeast-1:671620411615:stack/amplify-attendanceapp-dev-235325/9198c2a0-6fc9-11ec-9055-06782e15d9b5",
-      "AmplifyAppId": "d333bcja5zhzv4"
+      "AmplifyAppId": "d333bcja5zhzv4",
+      "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-attendanceapp-dev-235325-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
     },
     "categories": {
       "auth": {
         "attendanceapp10a1c128": {}
+      },
+      "function": {
+        "AttendanceAppUsersLambda": {
+          "deploymentBucketName": "amplify-attendanceapp-dev-235325-deployment",
+          "s3Key": "amplify-builds/AttendanceAppUsersLambda-4d3836304d45524c3874-build.zip"
+        }
       }
     }
   }
