@@ -1,25 +1,25 @@
 import React from 'react'
 import './App.css';
 import { Authenticator } from '@aws-amplify/ui-react'
-import { Admin, Resource, ListGuesser } from 'react-admin'
-import jsonServerProvider from 'ra-data-json-server'
+import { ProSidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar'
+import { FaHeart, FaGem} from 'react-icons/fa'
+import 'react-pro-sidebar/dist/css/styles.css'
 import '@aws-amplify/ui-react/styles.css'
-
-const dataProvider = jsonServerProvider('https://jsonplaceholder.typicode.com')
 
 function App() {
   return (
     <div className="App">
-      <Authenticator variation='modal'>
-        {({ signOut, user  }) => (
-          <main>
-            <Admin dataProvider={dataProvider}>
-              <Resource name="users" list={ListGuesser} />
-            </Admin>
-            <button onClick={signOut}>Sign out</button>
-          </main>
-        )}
-        </Authenticator>
+      <Authenticator valiation='modal'>
+        <ProSidebar>
+          <Menu iconShape='square'>
+            <MenuItem icon={<FaGem />}>Dashboard</MenuItem>
+            <SubMenu title='components' icon={<FaHeart />}>
+              <MenuItem>Component 1</MenuItem>
+              <MenuItem>Component 2</MenuItem>
+            </SubMenu>
+          </Menu>
+        </ProSidebar>
+      </Authenticator>
     </div>
   );
 }
