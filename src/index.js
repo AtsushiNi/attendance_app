@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import Amplify from 'aws-amplify';
+import Amplify, { API } from 'aws-amplify';
 import config from './aws-exports';
 
 Amplify.configure(config);
@@ -19,3 +19,14 @@ ReactDOM.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
+
+const apiName = 'AttendanceAppUsersApi'
+const path = '/users/1'
+API
+  .get(apiName, path)
+  .then(response => {
+    document.getElementById('msg').innerHTML =response
+  })
+  .catch(error => {
+    console.error(error.respoonse)
+  })
