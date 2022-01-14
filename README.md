@@ -27,3 +27,8 @@ dynamoDBのベストプラクティスは難しいから、RDB的な設計にす
 データ数が少ないのでN+1問題は無視
 
 ![sequence dialog](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/AtsushiNi/attendance_app/main/readme/ER_image.txt)
+
+## 使用したReactライブラリ
+- サイドバー：[react-pro-sidebar](https://github.com/azouaoui-med/react-pro-sidebar)
+- ヘッダー：[material-ui AppBar](https://mui.com/components/app-bar/)
+- ルーティング：[react-router-dom](https://v5.reactrouter.com/web/guides/quick-start)
