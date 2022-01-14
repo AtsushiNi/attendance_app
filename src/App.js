@@ -1,7 +1,20 @@
 import React from 'react'
 import { Authenticator } from '@aws-amplify/ui-react'
-import { ProSidebar, Menu, MenuItem, SubMenu, SidebarHeader, SidebarContent } from 'react-pro-sidebar'
-import { FaHeart, FaUser, FaUserCheck, FaRegSun } from 'react-icons/fa'
+import {
+  ProSidebar,
+  Menu,
+  MenuItem,
+  SubMenu,
+  SidebarHeader,
+  SidebarContent
+} from 'react-pro-sidebar'
+import {
+  FaHeart,
+  FaUser,
+  FaUserCheck,
+  FaRegSun
+} from 'react-icons/fa'
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom'
 import { MdGroup } from 'react-icons/md'
 import '@aws-amplify/ui-react/styles.css'
 import './styles/App.scss'
@@ -11,7 +24,7 @@ function App() {
     <div className="App">
       <Authenticator variation='modal'>
         {({signOut, user }) => (
-          <div>
+          <Router>
             <ProSidebar>
               <SidebarHeader>
                 <div
@@ -38,17 +51,42 @@ function App() {
                     <MenuItem>メンバー</MenuItem>
                     <MenuItem>所属部署</MenuItem>
                   </SubMenu>
-                  <MenuItem icon={<FaUserCheck />}>承認</MenuItem>
-                  <MenuItem icon={<MdGroup />}>部署</MenuItem>
-                  <MenuItem icon={<FaUser />}>社員</MenuItem>
+                  <MenuItem icon={<FaUserCheck />}>
+                    承認
+                    <Link to='/applications' />
+                  </MenuItem>
+                  <MenuItem icon={<MdGroup />}>
+                    部署
+                    <Link to='/groups' />
+                  </MenuItem>
+                  <MenuItem icon={<FaUser />}>
+                    社員
+                    <Link to='/users' />
+                  </MenuItem>
                 </Menu>
                 <Menu>
-                  <MenuItem icon={<FaRegSun />}>設定</MenuItem>
+                  <MenuItem icon={<FaRegSun />}>
+                    設定
+                    <Link to='/settings' />
+                  </MenuItem>
                 </Menu>
               </SidebarContent>
             </ProSidebar>
-            <button onClick={signOut}>sign out</button>
-          </div>
+
+            <main>
+              <Routes>
+                <Route path='/mypage'>
+                </Route>
+                <Route path='/groups'>
+                </Route>
+                <Route path='/users'>
+                </Route>
+                <Route path='/settings'>
+                </Route>
+              </Routes>
+              <button onClick={signOut}>sign out</button>
+            </main>
+          </Router>
         )}
       </Authenticator>
     </div>
