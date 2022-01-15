@@ -21,6 +21,8 @@ import { AccountCircle } from '@mui/icons-material'
 import '@aws-amplify/ui-react/styles.css'
 import './styles/App.scss'
 
+import { UserTable } from './components/UserTable'
+
 function App() {
   const [anchorEl, setAnchorEl] = React.useState(null)
 
@@ -118,7 +120,7 @@ function App() {
                 </Route>
                 <Route path='/groups'>
                 </Route>
-                <Route path='/users'>
+                <Route path='/users' element={<UserTable />}>
                 </Route>
                 <Route path='/settings'>
                 </Route>
