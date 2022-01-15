@@ -1,0 +1,25 @@
+{
+  "resourceName": "AttendanceAppUserGroupGeneralTable",
+  "tableName": "AttendanceAppUserGroupGeneralTable",
+  "partitionKey": {
+    "fieldName": "id",
+    "fieldType": "number"
+  },
+  "gsi": [
+    {
+      "name": "user_id",
+      "partitionKey": {
+        "fieldName": "user_id",
+        "fieldType": "number"
+      }
+    },
+    {
+      "name": "group_id",
+      "partitionKey": {
+        "fieldName": "group_id",
+        "fieldType": "number"
+      }
+    }
+  ],
+  "triggerFunctions": []
+}

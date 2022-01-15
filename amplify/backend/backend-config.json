@@ -31,6 +31,18 @@
     "AttendanceAppUsersTable": {
       "service": "DynamoDB",
       "providerPlugin": "awscloudformation"
+    },
+    "AttendanceAppGroupsTable": {
+      "service": "DynamoDB",
+      "providerPlugin": "awscloudformation"
+    },
+    "AttendanceAppUserGroupGeneralTable": {
+      "service": "DynamoDB",
+      "providerPlugin": "awscloudformation"
+    },
+    "AttendanceAppUserGroupAdminTable": {
+      "service": "DynamoDB",
+      "providerPlugin": "awscloudformation"
     }
   },
   "function": {
@@ -52,6 +64,11 @@
           }
         }
       ]
+    },
+    "AttendanceAppGroupsLambda": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
     }
   },
   "api": {
@@ -62,6 +79,14 @@
         {
           "category": "function",
           "resourceName": "AttendanceAppUsersLambda",
+          "attributes": [
+            "Name",
+            "Arn"
+          ]
+        },
+        {
+          "category": "function",
+          "resourceName": "AttendanceAppGroupsLambda",
           "attributes": [
             "Name",
             "Arn"

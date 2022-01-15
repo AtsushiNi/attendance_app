@@ -13,6 +13,13 @@
           "delete"
         ]
       }
+    },
+    "/groups": {
+      "name": "/groups",
+      "lambdaFunction": "AttendanceAppGroupsLambda",
+      "permissions": {
+        "setting": "open"
+      }
     }
   }
 }
