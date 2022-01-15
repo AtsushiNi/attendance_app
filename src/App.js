@@ -20,6 +20,7 @@ import '@aws-amplify/ui-react/styles.css'
 import './styles/App.scss'
 
 import { Header } from './components/Header'
+import { GroupTable } from './components/GroupTable'
 import { UserTable } from './components/UserTable'
 import { UserInfo } from './components/UserInfo'
 
@@ -82,7 +83,7 @@ function App() {
               <Routes>
                 <Route path='/mypage'>
                 </Route>
-                <Route path='/groups'>
+                <Route path='/groups' element={<GroupTable />}>
                 </Route>
                 <Route path='/users' element={<UserTable />}>
                 </Route>
