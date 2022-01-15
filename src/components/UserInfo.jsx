@@ -9,7 +9,6 @@ export const UserInfo = () => {
 
   useEffect(async () => {
     const userInfo = await UsersService.getUser(id)
-    console.log(userInfo)
     setUser(userInfo)
   }, [])
 
