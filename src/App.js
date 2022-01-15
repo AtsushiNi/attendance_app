@@ -22,6 +22,7 @@ import '@aws-amplify/ui-react/styles.css'
 import './styles/App.scss'
 
 import { UserTable } from './components/UserTable'
+import { UserInfo } from './components/UserInfo'
 
 function App() {
   const [anchorEl, setAnchorEl] = React.useState(null)
@@ -121,6 +122,8 @@ function App() {
                 <Route path='/groups'>
                 </Route>
                 <Route path='/users' element={<UserTable />}>
+                </Route>
+                <Route path='/users/:id' element={<UserInfo />}>
                 </Route>
                 <Route path='/settings'>
                 </Route>

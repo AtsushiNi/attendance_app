@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow,  Paper, Box } from '@mui/material'
 import UsersService from '../services/UsersService'
 
@@ -33,7 +34,11 @@ export const UserTable = () => {
                   key={user.id}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
-                  <TableCell component='th' scope='row'>{user.id}</TableCell>
+                  <TableCell component='th' scope='row'>
+                    <Link to={'/users/'+user.id}>
+                      {user.id}
+                    </Link>
+                  </TableCell>
                   <TableCell align='right'>{user.last_name}</TableCell>
                   <TableCell align='right'>{user.first_name}</TableCell>
                   <TableCell align='right'>{user.e_mail}</TableCell>
