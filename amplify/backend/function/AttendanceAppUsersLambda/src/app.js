@@ -134,6 +134,24 @@ app.get(path + '/object' + hashKeyPath + sortKeyPath, function(req, res) {
   });
 });
 
+app.get(path, function(req, res) {
+  var params = {
+    TableName: tableName
+  };
+
+  dynamodb.scan(params, (err, data) => {
+    if(err) {
+      res.statusCode = 500;
+      res.json({error: 'Could not scan items: ' + err.message});
+    } else {
+      if (data.Item) {
+        res.json(data.Item);
+      } else {
+        res.json(data) ;
+      }
+    }
+  })
+})
 
 /************************************
 * HTTP put method for insert object *
