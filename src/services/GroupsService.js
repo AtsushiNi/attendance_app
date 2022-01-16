@@ -9,14 +9,14 @@ class GroupsService {
 
     const response = await API.get(apiName, path, {})
 
-    return response.Items
+    return response
   }
 
   async getGroup(id) {
     const path = '/groups/' + id
     const response = await API.get(apiName, path, {})
 
-    return response[0]
+    return response
   }
 }
 

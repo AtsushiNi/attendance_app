@@ -21,6 +21,7 @@ import './styles/App.scss'
 
 import { Header } from './components/Header'
 import { GroupTable } from './components/GroupTable'
+import { GroupInfo } from './components/GroupInfo'
 import { UserTable } from './components/UserTable'
 import { UserInfo } from './components/UserInfo'
 
@@ -84,6 +85,8 @@ function App() {
                 <Route path='/mypage'>
                 </Route>
                 <Route path='/groups' element={<GroupTable />}>
+                </Route>
+                <Route path='/groups/:id' element={<GroupInfo />}>
                 </Route>
                 <Route path='/users' element={<UserTable />}>
                 </Route>

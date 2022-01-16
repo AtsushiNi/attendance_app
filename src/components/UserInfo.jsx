@@ -21,7 +21,7 @@ export const UserInfo = () => {
             <List>
               <ListItem>
                 <Avatar sx={{ width: 60, height: 60 }}/>
-                <Typography variant='h4' sx={{ ml: 5 }}>新浜敦史</Typography>
+                <Typography variant='h4' sx={{ ml: 5 }}>{user && user.last_name+user.first_name}</Typography>
               </ListItem>
               <Divider />
               <ListItem>
