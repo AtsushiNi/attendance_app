@@ -23,7 +23,7 @@
         },
         "AttendanceAppGroupsLambda": {
           "deploymentBucketName": "amplify-attendanceapp-dev-235325-deployment",
-          "s3Key": "amplify-builds/AttendanceAppGroupsLambda-734c5a4a36552f43364e-build.zip"
+          "s3Key": "amplify-builds/AttendanceAppGroupsLambda-3665422f78426a317068-build.zip"
         }
       }
     }
