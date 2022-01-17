@@ -29,7 +29,7 @@ export const UserTable = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {users.map(user => (
+              {users?.map(user => (
                 <TableRow
                   key={user.id}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

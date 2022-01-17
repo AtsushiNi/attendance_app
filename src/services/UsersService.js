@@ -8,7 +8,7 @@ class UsersService {
 
     const response = await API.get(apiName, path, {})
 
-    return response.Items
+    return response
   }
 
   async getUser(id) {

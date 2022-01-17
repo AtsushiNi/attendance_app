@@ -18,6 +18,16 @@ class GroupsService {
 
     return response
   }
+
+  async create(params) {
+    const path = '/groups'
+    const init = {
+      body: params
+    }
+    const response = await API.post(apiName, path, init)
+
+    return response
+  }
 }
 
 export default new GroupsService()

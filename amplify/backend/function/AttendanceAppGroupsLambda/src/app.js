@@ -192,4 +192,109 @@ app.get(path, function(req, res) {
   res.json(group)
 });
 
+/************************************
+* HTTP post method for insert object *
+*************************************/
+app.post(path, async function(req, res) {
+  // group作成
+  const groupMaxID = await getMaxID(tableName)
+  let putItemParams = {
+    TableName: tableName,
+    Item: {
+      id: (groupMaxID + 1),
+      name: req.body.name
+    }
+  }
+  const newGroup = await new Promise((resolve, reject) => {
+    dynamodb.put(putItemParams, (err, data) => {
+      if(err) {
+        res.statusCode = 500;
+        res.json({error: err, url: req.url, body: req.body});
+      } else{
+        resolve(data)
+      }
+    })
+  });
+
+  // adminユーザー作成
+  if(req.body.adminIDs.length) {
+    const adminMaxID = await getMaxID('AttendanceAppUserGroupAdminTable-dev')
+
+    var requests = req.body.adminIDs.map((id, index) => (
+      {
+        PutRequest: {
+          Item: {
+            id: (adminMaxID + index + 1),
+            group_id: (groupMaxID + 1),
+            user_id: id
+          }
+        }
+      }
+    ))
+    var params = {
+      RequestItems: {
+        'AttendanceAppUserGroupAdminTable-dev': requests
+      }
+    }
+    dynamodb.batchWrite(params, (err, data) => {
+      if(err) {
+        res.statusCode = 500;
+        res.json({error: err, url: req.url, body: req.body, params: params});
+      } else{
+        // res.json({success: 'post call succeed!', url: req.url, data: data})
+      }
+    })
+  }
+
+  // generalユーザー作成
+  if(req.body.generalIDs.length) {
+    const generalMaxID = await getMaxID('AttendanceAppUserGroupGeneralTable-dev')
+
+    var requests = req.body.generalIDs.map((id, index) => (
+      {
+        PutRequest: {
+          Item: {
+            id: (generalMaxID + index + 1),
+            group_id: (groupMaxID + 1),
+            user_id: id
+          }
+        }
+      }
+    ))
+    var params = {
+      RequestItems: {
+        'AttendanceAppUserGroupGeneralTable-dev': requests
+      }
+    }
+    dynamodb.batchWrite(params, (err, data) => {
+      if(err) {
+        res.statusCode = 500;
+        res.json({error: err, url: req.url, body: req.body, params: params});
+      } else{
+        // res.json({success: 'post call succeed!', url: req.url, data: data})
+      }
+    })
+  }
+
+  res.json({ message: 'group created' })
+});
+
+const getMaxID = async (tableName) => {
+  const params = {
+    TableName: tableName
+  }
+  const items = await new Promise((resolve, reject) => {
+    dynamodb.scan(params, (err, data) => {
+      if(err) {
+        reject({error: 'Could not scan items: ' + err.message});
+      } else {
+        resolve(data.Items);
+      }
+    })
+  })
+  const IDs = items.map(i => i.id)
+  const maxID = Math.max.apply(null, IDs)
+
+  return maxID
+}
 module.exports = app

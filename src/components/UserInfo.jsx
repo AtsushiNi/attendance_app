@@ -12,7 +12,7 @@ export const UserInfo = () => {
     setUser(userInfo)
   }, [])
 
-  return  (
+  return (
     <div style={{ margin: 30 }}>
       <h3 style={{ textAlign: 'left' }}>社員詳細</h3>
       <Box sx={{ marginTop: '30px' }}>
