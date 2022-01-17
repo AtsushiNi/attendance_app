@@ -38,7 +38,15 @@ export const GroupTable = () => {
     }
   }
   const openCreateModal = () => setShowCreateModal(true)
-  const closeCreateModal = () => setShowCreateModal(false)
+  const closeCreateModal = () => {
+    setShowCreateModal(false)
+    setGroupName('')
+    setSelectedAdmins([])
+    setSelectedAdminIDs([])
+    setSelectedGenerals([])
+    setSelectedGeneralIDs([])
+    setIsLoading(false)
+  }
   const handleChangeGroupName = (event) => setGroupName(event.target.value)
 
   const handleSubmit = async () => {
@@ -49,6 +57,11 @@ export const GroupTable = () => {
       generalIDs: selectedGeneralIDs
     })
     setGroups(await GroupsService.getGroups())
+    setGroupName('')
+    setSelectedAdmins([])
+    setSelectedAdminIDs([])
+    setSelectedGenerals([])
+    setSelectedGeneralIDs([])
     setIsLoading(false)
     setShowCreateModal(false)
   }
