@@ -57,62 +57,38 @@ const convertUrlType = (param, type) => {
 /********************************
  * HTTP Get method for list objects *
  ********************************/
-app.get(path + hashKeyPath, function(req, res) {
-  var condition = {}
-  condition[partitionKeyName] = {
-    ComparisonOperator: 'EQ'
-  }
+app.get(path, function(req, res) {
+  var params = {
+    TableName: tableName
+  };
 
-  if (userIdPresent && req.apiGateway) {
-    condition[partitionKeyName]['AttributeValueList'] = [req.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH ];
-  } else {
-    try {
-      condition[partitionKeyName]['AttributeValueList'] = [ convertUrlType(req.params[partitionKeyName], partitionKeyType) ];
-    } catch(err) {
+  dynamodb.scan(params, (err, data) => {
+    if(err) {
       res.statusCode = 500;
-      res.json({error: 'Wrong column type ' + err});
-    }
-  }
-
-  let queryParams = {
-    TableName: tableName,
-    KeyConditions: condition
-  }
-
-  dynamodb.query(queryParams, (err, data) => {
-    if (err) {
-      res.statusCode = 500;
-      res.json({error: 'Could not load items: ' + err});
+      res.json({error: 'Could not scan items: ' + err.message});
     } else {
-      res.json(data.Items);
+      if (data.Items) {
+        res.json(data.Items);
+      } else {
+        res.json(data) ;
+      }
     }
-  });
-});
+  })
+})
 
 /*****************************************
  * HTTP Get method for get single object *
  *****************************************/
 
-app.get(path + '/object' + hashKeyPath + sortKeyPath, function(req, res) {
+app.get(path + hashKeyPath, function(req, res) {
   var params = {};
-  if (userIdPresent && req.apiGateway) {
-    params[partitionKeyName] = req.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH;
-  } else {
-    params[partitionKeyName] = req.params[partitionKeyName];
-    try {
-      params[partitionKeyName] = convertUrlType(req.params[partitionKeyName], partitionKeyType);
-    } catch(err) {
-      res.statusCode = 500;
-      res.json({error: 'Wrong column type ' + err});
-    }
-  }
-  if (hasSortKey) {
-    try {
-      params[sortKeyName] = convertUrlType(req.params[sortKeyName], sortKeyType);
-    } catch(err) {
-      res.statusCode = 500;
-      res.json({error: 'Wrong column type ' + err});
-    }
+
+  params[partitionKeyName] = req.params[partitionKeyName];
+  try {
+    params[partitionKeyName] = convertUrlType(req.params[partitionKeyName], partitionKeyType);
+  } catch(err) {
+    res.statusCode = 500;
+    res.json({error: 'Wrong column type ' + err});
   }
 
   let getItemParams = {
@@ -134,23 +110,107 @@ app.get(path + '/object' + hashKeyPath + sortKeyPath, function(req, res) {
   });
 });
 
-app.get(path, function(req, res) {
-  var params = {
-    TableName: tableName
-  };
-
-  dynamodb.scan(params, (err, data) => {
-    if(err) {
-      res.statusCode = 500;
-      res.json({error: 'Could not scan items: ' + err.message});
-    } else {
-      if (data.Item) {
-        res.json(data.Item);
-      } else {
-        res.json(data) ;
-      }
+/********************************
+ * HTTP Get method for groups in single user
+ ********************************/
+app.get(path+'/:id/groups', async function(req, res) {
+  // get admin grooups
+  var condition = {
+    TableName: 'AttendanceAppUserGroupAdminTable-dev',
+    IndexName: 'user_id',
+    KeyConditionExpression: "user_id = :userID",
+    ExpressionAttributeValues: {
+      ":userID": parseInt(req.params['id'])
     }
+  }
+  const adminGroupIDs = await new Promise((resolve, reject) => {
+    dynamodb.query(condition, (err, data) => {
+      if(err) {
+        res.statusCode = 500
+        res.json({error: 'Could not load AdminGroupIDs: ' + err.message})
+      } else {
+        if (data.Items) {
+          resolve(data.Items.map(item => item['group_id']))
+        } else {
+          resolve([])
+        }
+      }
+    })
   })
+
+  let adminGroups = []
+  if (adminGroupIDs) {
+    adminGroups = await Promise.all(adminGroupIDs.map(async id => {
+      const getAdminGroupCondition = {
+        TableName: 'AttendanceAppGroupsTable-dev',
+        Key: {
+          "id": id
+        }
+      }
+      return await new Promise((resolve, reject) => {
+        dynamodb.get(getAdminGroupCondition, (err, data) => {
+          if(err) {
+            res.statusCode = 500
+            res.json({error: 'Could not load AdminGroup: ' + err.message})
+          } else {
+            if (data.Item) {
+              resolve(data.Item)
+            }
+          }
+        })
+      })
+    }))
+  }
+
+  // get general grooups
+  var condition = {
+    TableName: 'AttendanceAppUserGroupGeneralTable-dev',
+    IndexName: 'user_id',
+    KeyConditionExpression: "user_id = :userID",
+    ExpressionAttributeValues: {
+      ":userID": parseInt(req.params['id'])
+    }
+  }
+  const generalGroupIDs = await new Promise((resolve, reject) => {
+    dynamodb.query(condition, (err, data) => {
+      if(err) {
+        res.statusCode = 500
+        res.json({error: 'Could not load GeneralGroupIDs: ' + err.message})
+      } else {
+        if (data.Items) {
+          resolve(data.Items.map(item => item['group_id']))
+        } else {
+          resolve([])
+        }
+      }
+    })
+  })
+
+  let generalGroups = []
+  if (generalGroupIDs) {
+    generalGroups = await Promise.all(generalGroupIDs.map(async id => {
+      const getGeneralGroupCondition = {
+        TableName: 'AttendanceAppGroupsTable-dev',
+        Key: {
+          "id": id
+        }
+      }
+      return await new Promise((resolve, reject) => {
+        dynamodb.get(getGeneralGroupCondition, (err, data) => {
+          if(err) {
+            res.statusCode = 500
+            res.json({error: 'Could not load GeneralGroup: ' + err.message})
+          } else {
+            if (data.Item) {
+              resolve(data.Item)
+            }
+          }
+        })
+      })
+    }))
+  }
+
+  res.json({adminGroups: adminGroups, generalGroups: generalGroups})
 })
 
 /************************************

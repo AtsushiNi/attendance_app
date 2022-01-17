@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
-import { Box, Card, CardContent, List, ListItem, Avatar, Typography, Divider, Table, TableBody, TableRow, TableCell } from  '@mui/material'
+import { useParams, Link } from 'react-router-dom'
+import { Box, Card, CardContent, List, ListItem, Avatar, Typography, Divider, Table, TableHead, TableBody, TableRow, TableCell } from  '@mui/material'
 import UsersService from '../services/UsersService'
 
 export const UserInfo = () => {
@@ -8,7 +8,7 @@ export const UserInfo = () => {
   const [user, setUser] = useState(null)
 
   useEffect(async () => {
-    const userInfo = await UsersService.getUser(id)
+    const userInfo = await UsersService.getUserWithGroups(id)
     setUser(userInfo)
   }, [])
 
@@ -65,6 +65,46 @@ export const UserInfo = () => {
             <List>
               <ListItem>
                 <h3>所属部署</h3>
+              </ListItem>
+              <ListItem>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>
+                        部署名
+                      </TableCell>
+                      <TableCell>
+                        部署内の役割
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {user?.adminGroups.map(group => (
+                      <TableRow>
+                        <TableCell>
+                          <Link to={'/groups/'+group.id}>
+                            {group.name}
+                          </Link>
+                        </TableCell>
+                        <TableCell>
+                          承認者
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {user?.generalGroups.map(group => (
+                      <TableRow>
+                        <TableCell>
+                          <Link to={'/groups/'+group.id}>
+                            {group.name}
+                          </Link>
+                        </TableCell>
+                        <TableCell>
+                          一般社員
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </ListItem>
             </List>
           </CardContent>
