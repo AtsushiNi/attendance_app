@@ -205,7 +205,7 @@ app.post(path, async function(req, res) {
       name: req.body.name
     }
   }
-  const newGroup = await new Promise((resolve, reject) => {
+  await new Promise((resolve, reject) => {
     dynamodb.put(putItemParams, (err, data) => {
       if(err) {
         res.statusCode = 500;
@@ -278,6 +278,170 @@ app.post(path, async function(req, res) {
 
   res.json({ message: 'group created' })
 });
+
+/************************************
+* HTTP put method
+*************************************/
+app.put(path + hashKeyPath, async function(req, res) {
+  // group更新
+  let putItemParams = {
+    TableName: tableName,
+    Item: {
+      id: parseInt(req.params.id),
+      name: req.body.name
+    }
+  }
+  await new Promise((resolve, reject) => {
+    dynamodb.put(putItemParams, (err, data) => {
+      if(err) {
+        res.statusCode = 500;
+        res.json({error: err, url: req.url, body: req.body});
+      } else{
+        resolve(data)
+      }
+    })
+  });
+
+  // adminユーザー作成
+  if(req.body.addedAdminIDs.length) {
+    const adminMaxID = await getMaxID('AttendanceAppUserGroupAdminTable-dev')
+
+    var requests = req.body.addedAdminIDs.map((id, index) => (
+      {
+        PutRequest: {
+          Item: {
+            id: (adminMaxID + index + 1),
+            group_id: parseInt(req.params.id),
+            user_id: id
+          }
+        }
+      }
+    ))
+    var params = {
+      RequestItems: {
+        'AttendanceAppUserGroupAdminTable-dev': requests
+      }
+    }
+    dynamodb.batchWrite(params, (err, data) => {
+      if(err) {
+        res.statusCode = 500;
+        res.json({error: err, url: req.url, body: req.body, params: params});
+      } else{
+        // res.json({success: 'post call succeed!', url: req.url, data: data})
+      }
+    })
+  }
+
+  // generalユーザー作成
+  if(req.body.addedGeneralIDs.length) {
+    const generalMaxID = await getMaxID('AttendanceAppUserGroupGeneralTable-dev')
+
+    var requests = req.body.addedGeneralIDs.map((id, index) => (
+      {
+        PutRequest: {
+          Item: {
+            id: (generalMaxID + index + 1),
+            group_id: parseInt(req.params.id),
+            user_id: id
+          }
+        }
+      }
+    ))
+    var params = {
+      RequestItems: {
+        'AttendanceAppUserGroupGeneralTable-dev': requests
+      }
+    }
+    dynamodb.batchWrite(params, (err, data) => {
+      if(err) {
+        res.statusCode = 500;
+        res.json({error: err, url: req.url, body: req.body, params: params});
+      } else{
+        // res.json({success: 'post call succeed!', url: req.url, data: data})
+      }
+    })
+  }
+
+  // adminユーザー削除
+  if(req.body.deletedAdminIDs.length) {
+    var params = {
+      TableName: 'AttendanceAppUserGroupAdminTable-dev',
+      IndexName: 'group_id',
+      KeyConditionExpression: "group_id = :groupID",
+      ExpressionAttributeValues: {
+        ":groupID": parseInt(req.params.id)
+      }
+    }
+    var relations = await new Promise((resolve, reject) => {
+      dynamodb.query(params, (err, data) => {
+        if(err) {
+          res.statusCode = 500
+          res.json({error: 'Could not load UserGroupAdmins: ' + err.message})
+        } else {
+          resolve(data.Items)
+        }
+      })
+    })
+
+    relations.forEach(relation => {
+      if(req.body.deletedAdminIDs.includes(relation.user_id)) {
+        var params = {
+          TableName: 'AttendanceAppUserGroupAdminTable-dev',
+          Key: {
+            id: relation.id
+          }
+        }
+        dynamodb.delete(params, (err, data) => {
+          if(err) {
+            res.statusCode = 500
+            res.json({erroor: 'Could not delete UserGroupAdmins: ' + err.message})
+          }
+        })
+      }
+    })
+  }
+
+  // generalユーザー削除
+  if(req.body.deletedGeneralIDs.length) {
+    var params = {
+      TableName: 'AttendanceAppUserGroupGeneralTable-dev',
+      IndexName: 'group_id',
+      KeyConditionExpression: "group_id = :groupID",
+      ExpressionAttributeValues: {
+        ":groupID": parseInt(req.params.id)
+      }
+    }
+    var relations = await new Promise((resolve, reject) => {
+      dynamodb.query(params, (err, data) => {
+        if(err) {
+          res.statusCode = 500
+          res.json({error: 'Could not load UserGroupGenerals: ' + err.message})
+        } else {
+          resolve(data.Items)
+        }
+      })
+    })
+
+    relations.forEach(relation => {
+      if(req.body.deletedGeneralIDs.includes(relation.user_id)) {
+        var params = {
+          TableName: 'AttendanceAppUserGroupGeneralTable-dev',
+          Key: {
+            id: relation.id
+          }
+        }
+        dynamodb.delete(params, (err, data) => {
+          if(err) {
+            res.statusCode = 500
+            res.json({erroor: 'Could not delete UserGroupGenerals: ' + err.message})
+          }
+        })
+      }
+    })
+  }
+
+  res.json({message: 'delete completed!'})
+})
 
 const getMaxID = async (tableName) => {
   const params = {

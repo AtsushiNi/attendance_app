@@ -28,6 +28,16 @@ class GroupsService {
 
     return response
   }
+
+  async update(params) {
+    const path = '/groups/' + params.id
+    const init = {
+      body: params
+    }
+    const response = await API.put(apiName, path, init)
+
+    return response
+  }
 }
 
 export default new GroupsService()
