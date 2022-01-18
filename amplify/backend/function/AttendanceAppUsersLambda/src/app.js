@@ -12,6 +12,7 @@ const AWS = require('aws-sdk')
 var awsServerlessExpressMiddleware = require('aws-serverless-express/middleware')
 var bodyParser = require('body-parser')
 var express = require('express')
+const useUser = require('./models/User')
 
 AWS.config.update({ region: process.env.TABLE_REGION });
 
@@ -44,6 +45,9 @@ app.use(function(req, res, next) {
   next()
 });
 
+// models
+const User = new useUser(dynamodb)
+
 // convert url string param to expected Type
 const convertUrlType = (param, type) => {
   switch(type) {
@@ -57,23 +61,15 @@ const convertUrlType = (param, type) => {
 /********************************
  * HTTP Get method for list objects *
  ********************************/
-app.get(path, function(req, res) {
-  var params = {
-    TableName: tableName
-  };
+app.get(path, async function(req, res) {
+  try {
+    const users = await User.scan()
 
-  dynamodb.scan(params, (err, data) => {
-    if(err) {
-      res.statusCode = 500;
-      res.json({error: 'Could not scan items: ' + err.message});
-    } else {
-      if (data.Items) {
-        res.json(data.Items);
-      } else {
-        res.json(data) ;
-      }
-    }
-  })
+    res.json(users)
+  } catch (error) {
+    res.statusCode = 500
+    res.json(error)
+  }
 })
 
 /*****************************************
