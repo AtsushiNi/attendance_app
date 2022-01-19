@@ -14,7 +14,8 @@ var bodyParser = require('body-parser')
 var express = require('express')
 const useUser = require('./models/User')
 const useGroup = require('./models/Group')
-const useUserGroupAdmiin = require('./models/UserGroupAdmin')
+const useUserGroupAdmin = require('./models/UserGroupAdmin')
+const useUserGroupGeneral = require('./models/UserGroupGeneral')
 
 AWS.config.update({ region: process.env.TABLE_REGION });
 
@@ -50,7 +51,8 @@ app.use(function(req, res, next) {
 // models
 const User = new useUser(dynamodb)
 const Group = new useGroup(dynamodb)
-const UserGroupAdmin = new useUserGroupAdmiin(dynamodb)
+const UserGroupAdmin = new useUserGroupAdmin(dynamodb)
+const UserGroupGeneral = new useUserGroupGeneral(dynamodb)
 
 // convert url string param to expected Type
 const convertUrlType = (param, type) => {
@@ -95,7 +97,7 @@ app.get('/users/:id',  async function(req, res) {
  * HTTP Get method for groups in single user
  ********************************/
 app.get(path+'/:id/groups', async function(req, res) {
-  // get admin grooups
+  // get admin groups
   const id = parseInt(req.params.id)
   let adminGroupIDs
   try {
@@ -113,53 +115,23 @@ app.get(path+'/:id/groups', async function(req, res) {
     res.json(error)
   }
 
-  // get general grooups
-  var condition = {
-    TableName: 'AttendanceAppUserGroupGeneralTable-dev',
-    IndexName: 'user_id',
-    KeyConditionExpression: "user_id = :userID",
-    ExpressionAttributeValues: {
-      ":userID": parseInt(req.params['id'])
-    }
+  // get general groups
+  let generalGroupIDs
+  try {
+    generalGroupIDs = await UserGroupGeneral.getGroupIDsByUserId(id)
+  } catch (error) {
+    res.statusCode = 500
+    res.json(error)
   }
-  const generalGroupIDs = await new Promise((resolve, reject) => {
-    dynamodb.query(condition, (err, data) => {
-      if(err) {
-        res.statusCode = 500
-        res.json({error: 'Could not load GeneralGroupIDs: ' + err.message})
-      } else {
-        if (data.Items) {
-          resolve(data.Items.map(item => item['group_id']))
-        } else {
-          resolve([])
-        }
-      }
-    })
-  })
 
-  let generalGroups = []
-  if (generalGroupIDs) {
-    generalGroups = await Promise.all(generalGroupIDs.map(async id => {
-      const getGeneralGroupCondition = {
-        TableName: 'AttendanceAppGroupsTable-dev',
-        Key: {
-          "id": id
-        }
-      }
-      return await new Promise((resolve, reject) => {
-        dynamodb.get(getGeneralGroupCondition, (err, data) => {
-          if(err) {
-            res.statusCode = 500
-            res.json({error: 'Could not load GeneralGroup: ' + err.message})
-          } else {
-            if (data.Item) {
-              resolve(data.Item)
-            }
-          }
-        })
-      })
-    }))
+  let generalGroups
+  try {
+    generalGroups = await Group.batchGet(generalGroupIDs)
+  } catch (error) {
+    res.statusCode = 500
+    res.json(error)
   }
+
 
   res.json({adminGroups: adminGroups, generalGroups: generalGroups})
 })
