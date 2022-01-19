@@ -11,18 +11,6 @@ AWS.config.update({ region: process.env.TABLE_REGION });
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
-let tableName = "AttendanceAppGroupsTable";
-if(process.env.ENV && process.env.ENV !== "NONE") {
-  tableName = tableName + '-' + process.env.ENV;
-}
-
-const userIdPresent = false;
-const partitionKeyName = "id";
-const partitionKeyType = "N";
-const path = "/groups";
-const UNAUTH = 'UNAUTH';
-const hashKeyPath = '/:' + partitionKeyName;
-
 var app = express()
 app.use(bodyParser.json())
 app.use(awsServerlessExpressMiddleware.eventContext())
@@ -38,15 +26,6 @@ const User = new useUser(dynamodb)
 const Group = new useGroup(dynamodb)
 const UserGroupAdmin = new useUserGroupAdmin(dynamodb)
 const UserGroupGeneral = new useUserGroupGeneral(dynamodb)
-
-const convertUrlType = (param, type) => {
-  switch(type) {
-    case "N":
-      return Number.parseInt(param);
-    default:
-      return param;
-  }
-}
 
 /********************************
  * HTTP Get method for list objects *
@@ -119,85 +98,34 @@ app.get('/groups', async function(req, res) {
 /************************************
 * HTTP post method for insert object *
 *************************************/
-app.post(path, async function(req, res) {
+app.post('/groups', async function(req, res) {
   // group作成
-  const groupMaxID = await getMaxID(tableName)
-  let putItemParams = {
-    TableName: tableName,
-    Item: {
-      id: (groupMaxID + 1),
-      name: req.body.name
-    }
+  let id
+  try {
+    id = await Group.create(req.body.name)
+  } catch (error) {
+    res.statusCode = 500
+    res.json(error)
   }
-  await new Promise((resolve, reject) => {
-    dynamodb.put(putItemParams, (err, data) => {
-      if(err) {
-        res.statusCode = 500;
-        res.json({error: err, url: req.url, body: req.body});
-      } else{
-        resolve(data)
-      }
-    })
-  });
 
   // adminユーザー作成
   if(req.body.adminIDs.length) {
-    const adminMaxID = await getMaxID('AttendanceAppUserGroupAdminTable-dev')
-
-    var requests = req.body.adminIDs.map((id, index) => (
-      {
-        PutRequest: {
-          Item: {
-            id: (adminMaxID + index + 1),
-            group_id: (groupMaxID + 1),
-            user_id: id
-          }
-        }
-      }
-    ))
-    var params = {
-      RequestItems: {
-        'AttendanceAppUserGroupAdminTable-dev': requests
-      }
+    try {
+      await UserGroupAdmin.batchCreate(id, req.body.adminIDs)
+    } catch (error) {
+      res.statusCode = 500
+      res.json(error)
     }
-    dynamodb.batchWrite(params, (err, data) => {
-      if(err) {
-        res.statusCode = 500;
-        res.json({error: err, url: req.url, body: req.body, params: params});
-      } else{
-        // res.json({success: 'post call succeed!', url: req.url, data: data})
-      }
-    })
   }
 
   // generalユーザー作成
   if(req.body.generalIDs.length) {
-    const generalMaxID = await getMaxID('AttendanceAppUserGroupGeneralTable-dev')
-
-    var requests = req.body.generalIDs.map((id, index) => (
-      {
-        PutRequest: {
-          Item: {
-            id: (generalMaxID + index + 1),
-            group_id: (groupMaxID + 1),
-            user_id: id
-          }
-        }
-      }
-    ))
-    var params = {
-      RequestItems: {
-        'AttendanceAppUserGroupGeneralTable-dev': requests
-      }
+    try {
+      await UserGroupGeneral.batchCreate(id, req.body.generalIDs)
+    } catch (error) {
+      res.statusCode = 500
+      res.json(error)
     }
-    dynamodb.batchWrite(params, (err, data) => {
-      if(err) {
-        res.statusCode = 500;
-        res.json({error: err, url: req.url, body: req.body, params: params});
-      } else{
-        // res.json({success: 'post call succeed!', url: req.url, data: data})
-      }
-    })
   }
 
   res.json({ message: 'group created' })
@@ -206,183 +134,83 @@ app.post(path, async function(req, res) {
 /************************************
 * HTTP put method
 *************************************/
-app.put(path + hashKeyPath, async function(req, res) {
+app.put('/groups/:id', async function(req, res) {
+  const id = parseInt(req.params.id)
+
   // group更新
-  let putItemParams = {
-    TableName: tableName,
-    Item: {
-      id: parseInt(req.params.id),
-      name: req.body.name
-    }
+  const updateParams = { name: req.body.name }
+  try {
+    await Group.update(id, updateParams)
+  } catch (error) {
+    res.statusCode = 500
+    res.json(error)
   }
-  await new Promise((resolve, reject) => {
-    dynamodb.put(putItemParams, (err, data) => {
-      if(err) {
-        res.statusCode = 500;
-        res.json({error: err, url: req.url, body: req.body});
-      } else{
-        resolve(data)
-      }
-    })
-  });
 
   // adminユーザー作成
   if(req.body.addedAdminIDs.length) {
-    const adminMaxID = await getMaxID('AttendanceAppUserGroupAdminTable-dev')
-
-    var requests = req.body.addedAdminIDs.map((id, index) => (
-      {
-        PutRequest: {
-          Item: {
-            id: (adminMaxID + index + 1),
-            group_id: parseInt(req.params.id),
-            user_id: id
-          }
-        }
-      }
-    ))
-    var params = {
-      RequestItems: {
-        'AttendanceAppUserGroupAdminTable-dev': requests
-      }
+    try {
+      await UserGroupAdmin.batchCreate(id, req.body.addedAdminIDs)
+    } catch (error) {
+      res.statusCode = 500
+      res.json(error)
     }
-    dynamodb.batchWrite(params, (err, data) => {
-      if(err) {
-        res.statusCode = 500;
-        res.json({error: err, url: req.url, body: req.body, params: params});
-      } else{
-        // res.json({success: 'post call succeed!', url: req.url, data: data})
-      }
-    })
   }
 
   // generalユーザー作成
   if(req.body.addedGeneralIDs.length) {
-    const generalMaxID = await getMaxID('AttendanceAppUserGroupGeneralTable-dev')
-
-    var requests = req.body.addedGeneralIDs.map((id, index) => (
-      {
-        PutRequest: {
-          Item: {
-            id: (generalMaxID + index + 1),
-            group_id: parseInt(req.params.id),
-            user_id: id
-          }
-        }
-      }
-    ))
-    var params = {
-      RequestItems: {
-        'AttendanceAppUserGroupGeneralTable-dev': requests
-      }
+    try {
+      await UserGroupGeneral.batchCreate(id, req.body.addedGeneralIDs)
+    } catch (error) {
+      res.statusCode = 500
+      res.json(error)
     }
-    dynamodb.batchWrite(params, (err, data) => {
-      if(err) {
-        res.statusCode = 500;
-        res.json({error: err, url: req.url, body: req.body, params: params});
-      } else{
-        // res.json({success: 'post call succeed!', url: req.url, data: data})
-      }
-    })
   }
 
   // adminユーザー削除
   if(req.body.deletedAdminIDs.length) {
-    var params = {
-      TableName: 'AttendanceAppUserGroupAdminTable-dev',
-      IndexName: 'group_id',
-      KeyConditionExpression: "group_id = :groupID",
-      ExpressionAttributeValues: {
-        ":groupID": parseInt(req.params.id)
-      }
+    let relations
+    try {
+      relations = await UserGroupAdmin.queryByGroupId(id)
+    } catch(error) {
+      res.statusCode = 500
+      res.json(error)
     }
-    var relations = await new Promise((resolve, reject) => {
-      dynamodb.query(params, (err, data) => {
-        if(err) {
-          res.statusCode = 500
-          res.json({error: 'Could not load UserGroupAdmins: ' + err.message})
-        } else {
-          resolve(data.Items)
-        }
-      })
-    })
 
-    relations.forEach(relation => {
+    await Promise.all(relations.map(async relation => {
       if(req.body.deletedAdminIDs.includes(relation.user_id)) {
-        var params = {
-          TableName: 'AttendanceAppUserGroupAdminTable-dev',
-          Key: {
-            id: relation.id
-          }
+        try {
+          await UserGroupAdmin.delete(relation.id)
+        } catch (error) {
+          res.statusCode = 500
+          res.json(error)
         }
-        dynamodb.delete(params, (err, data) => {
-          if(err) {
-            res.statusCode = 500
-            res.json({erroor: 'Could not delete UserGroupAdmins: ' + err.message})
-          }
-        })
       }
-    })
+    }))
   }
 
   // generalユーザー削除
   if(req.body.deletedGeneralIDs.length) {
-    var params = {
-      TableName: 'AttendanceAppUserGroupGeneralTable-dev',
-      IndexName: 'group_id',
-      KeyConditionExpression: "group_id = :groupID",
-      ExpressionAttributeValues: {
-        ":groupID": parseInt(req.params.id)
-      }
+    let relations
+    try {
+      relations = await UserGroupGeneral.queryByGroupId(id)
+    } catch(error) {
+      res.statusCode = 500
+      res.json(error)
     }
-    var relations = await new Promise((resolve, reject) => {
-      dynamodb.query(params, (err, data) => {
-        if(err) {
-          res.statusCode = 500
-          res.json({error: 'Could not load UserGroupGenerals: ' + err.message})
-        } else {
-          resolve(data.Items)
-        }
-      })
-    })
 
-    relations.forEach(relation => {
+    await Promise.all(relations.map(async relation => {
       if(req.body.deletedGeneralIDs.includes(relation.user_id)) {
-        var params = {
-          TableName: 'AttendanceAppUserGroupGeneralTable-dev',
-          Key: {
-            id: relation.id
-          }
+        try {
+          await UserGroupGeneral.delete(relation.id)
+        } catch (error) {
+          res.statusCode = 500
+          res.json(error)
         }
-        dynamodb.delete(params, (err, data) => {
-          if(err) {
-            res.statusCode = 500
-            res.json({erroor: 'Could not delete UserGroupGenerals: ' + err.message})
-          }
-        })
       }
-    })
+    }))
   }
 
   res.json({message: 'delete completed!'})
 })
 
-const getMaxID = async (tableName) => {
-  const params = {
-    TableName: tableName
-  }
-  const items = await new Promise((resolve, reject) => {
-    dynamodb.scan(params, (err, data) => {
-      if(err) {
-        reject({error: 'Could not scan items: ' + err.message});
-      } else {
-        resolve(data.Items);
-      }
-    })
-  })
-  const IDs = items.map(i => i.id)
-  const maxID = Math.max.apply(null, IDs)
-
-  return maxID
-}
 module.exports = app

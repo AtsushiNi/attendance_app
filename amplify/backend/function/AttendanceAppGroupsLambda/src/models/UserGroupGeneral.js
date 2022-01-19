@@ -4,7 +4,33 @@ class UserGroupGeneral {
     this.dynamodb = dynamodb
   }
 
+  async scan() {
+    const params = {
+      TableName: this.tableName
+    }
+    const groups = await new Promise((resolve, reject) => {
+      this.dynamodb.scan(params, (err, data) => {
+        if(err) {
+          reject({error: 'Could not scan UserGroupGenerals: ' + err.message})
+        } else {
+          resolve(data.Items)
+        }
+      })
+    })
+    return groups
+  }
+
   async getUserIDsByGroupId(groupID) {
+    let relations
+    try {
+      relations = await this.queryByGroupId(groupID)
+    } catch(error) {
+      throw(error)
+    }
+    return relations.map(relation => relation.user_id)
+  }
+
+  async queryByGroupId(groupID) {
     const params = {
       TableName: this.tableName,
       IndexName: 'group_id',
@@ -13,16 +39,78 @@ class UserGroupGeneral {
         ":groupID": groupID
       }
     }
-    const userIDs = await new Promise((resolve, reject) => {
+    const relations = await new Promise((resolve, reject) => {
       this.dynamodb.query(params, (err, data) => {
         if(err) {
           reject({error: ('Could not query generalGroups: ' + err.message)})
         } else {
-          resolve(data.Items.map(relation => relation.group_id))
+          resolve(data.Items)
         }
       })
     })
-    return userIDs
+    return relations
+  }
+
+  async batchCreate(groupID, userIDs) {
+    let maxID
+    try {
+      maxID = await this.getMaxID()
+    } catch (error) {
+      throw error
+    }
+    const requests = userIDs.map((id, index) => (
+      {
+        PutRequest: {
+          Item: {
+            id: (maxID + index + 1),
+            group_id: groupID,
+            user_id: id
+          }
+        }
+      }
+    ))
+    const params = {
+      RequestItems: {
+        [this.tableName]: requests
+      }
+    }
+    await new Promise((resolve, reject) => {
+      this.dynamodb.batchWrite(params, (err, data) => {
+        if(err) {
+          reject({error: 'Could not create UserGroupGenerals: ' + err.message})
+        } else {
+          resolve(data)
+        }
+      })
+    })
+    return({message: 'completed create UserGroupGenerals'})
+  }
+
+  async delete(id) {
+    const params = {
+      TableName: this.tableName,
+      Key: {
+        id: id
+      }
+    }
+    await new Promise((resolve, reject) => {
+      this.dynamodb.delete(params, (err, data) => {
+        if(err) {
+          reject({error: 'Could not delete UserGroupGeneral: ' + err.message})
+        } else {
+          resolve(data)
+        }
+      })
+    })
+    return({message: 'completed delete UserGroupGeneral'})
+  }
+
+  async getMaxID() {
+    const groups = await this.scan()
+    const IDs = groups.map(i => i.id)
+    const maxID = Math.max.apply(null, IDs)
+
+    return maxID
   }
 }
 
