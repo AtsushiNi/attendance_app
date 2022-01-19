@@ -14,7 +14,7 @@ import {
   FaUserCheck,
   FaRegSun
 } from 'react-icons/fa'
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom'
+import { Route, Routes, Link, useLocation } from 'react-router-dom'
 import { MdGroup } from 'react-icons/md'
 import '@aws-amplify/ui-react/styles.css'
 import './styles/App.scss'
@@ -26,11 +26,24 @@ import { UserTable } from './components/UserTable'
 import { UserInfo } from './components/UserInfo'
 
 function App() {
+  const params = useLocation()
+  const getStyle = (id) => {
+    if(params.pathname.indexOf(id) !== -1)
+      return(
+        {
+          backgroundColor: 'rgba(255,255,255,0.1)'
+        }
+      )
+    else {
+      return({})
+    }
+  }
+
   return (
     <div className="App">
       <Authenticator variation='modal'>
         {({signOut, user }) => (
-          <Router>
+          <div>
             <ProSidebar>
               <SidebarHeader>
                 <div
@@ -57,15 +70,15 @@ function App() {
                     <MenuItem>メンバー</MenuItem>
                     <MenuItem>所属部署</MenuItem>
                   </SubMenu>
-                  <MenuItem icon={<FaUserCheck />}>
+                  <MenuItem icon={<FaUserCheck />} style={getStyle('application')} id='application'>
                     承認
                     <Link to='/applications' />
                   </MenuItem>
-                  <MenuItem icon={<MdGroup />}>
+                  <MenuItem icon={<MdGroup />} style={getStyle('groups')} id='groups'>
                     部署
                     <Link to='/groups' />
                   </MenuItem>
-                  <MenuItem icon={<FaUser />}>
+                  <MenuItem icon={<FaUser />} style={getStyle('users')} id='users'>
                     社員
                     <Link to='/users' />
                   </MenuItem>
@@ -96,7 +109,7 @@ function App() {
                 </Route>
               </Routes>
             </main>
-          </Router>
+          </div>
         )}
       </Authenticator>
     </div>
