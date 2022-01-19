@@ -19,7 +19,7 @@
       "function": {
         "AttendanceAppUsersLambda": {
           "deploymentBucketName": "amplify-attendanceapp-dev-235325-deployment",
-          "s3Key": "amplify-builds/AttendanceAppUsersLambda-32587477512f6e354a39-build.zip"
+          "s3Key": "amplify-builds/AttendanceAppUsersLambda-4349415541342b713970-build.zip"
         },
         "AttendanceAppGroupsLambda": {
           "deploymentBucketName": "amplify-attendanceapp-dev-235325-deployment",
