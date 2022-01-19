@@ -13,6 +13,8 @@ var awsServerlessExpressMiddleware = require('aws-serverless-express/middleware'
 var bodyParser = require('body-parser')
 var express = require('express')
 const useUser = require('./models/User')
+const useGroup = require('./models/Group')
+const useUserGroupAdmiin = require('./models/UserGroupAdmin')
 
 AWS.config.update({ region: process.env.TABLE_REGION });
 
@@ -47,6 +49,8 @@ app.use(function(req, res, next) {
 
 // models
 const User = new useUser(dynamodb)
+const Group = new useGroup(dynamodb)
+const UserGroupAdmin = new useUserGroupAdmiin(dynamodb)
 
 // convert url string param to expected Type
 const convertUrlType = (param, type) => {
@@ -61,7 +65,7 @@ const convertUrlType = (param, type) => {
 /********************************
  * HTTP Get method for list objects *
  ********************************/
-app.get(path, async function(req, res) {
+app.get('/users', async function(req, res) {
   try {
     const users = await User.scan()
 
@@ -76,34 +80,15 @@ app.get(path, async function(req, res) {
  * HTTP Get method for get single object *
  *****************************************/
 
-app.get(path + hashKeyPath, function(req, res) {
-  var params = {};
-
-  params[partitionKeyName] = req.params[partitionKeyName];
+app.get('/users/:id',  async function(req, res) {
+  const id = parseInt(req.params.id)
   try {
-    params[partitionKeyName] = convertUrlType(req.params[partitionKeyName], partitionKeyType);
-  } catch(err) {
-    res.statusCode = 500;
-    res.json({error: 'Wrong column type ' + err});
+    const user = await User.get(id)
+    res.json(user)
+  } catch (error) {
+    res.statusCode = 500
+    res.json(error)
   }
-
-  let getItemParams = {
-    TableName: tableName,
-    Key: params
-  }
-
-  dynamodb.get(getItemParams,(err, data) => {
-    if(err) {
-      res.statusCode = 500;
-      res.json({error: 'Could not load items: ' + err.message});
-    } else {
-      if (data.Item) {
-        res.json(data.Item);
-      } else {
-        res.json(data) ;
-      }
-    }
-  });
 });
 
 /********************************
@@ -111,51 +96,21 @@ app.get(path + hashKeyPath, function(req, res) {
  ********************************/
 app.get(path+'/:id/groups', async function(req, res) {
   // get admin grooups
-  var condition = {
-    TableName: 'AttendanceAppUserGroupAdminTable-dev',
-    IndexName: 'user_id',
-    KeyConditionExpression: "user_id = :userID",
-    ExpressionAttributeValues: {
-      ":userID": parseInt(req.params['id'])
-    }
+  const id = parseInt(req.params.id)
+  let adminGroupIDs
+  try {
+    adminGroupIDs = await UserGroupAdmin.getGroupIDsByUserId(id)
+  } catch (error) {
+    res.statusCode = 500
+    res.json(error)
   }
-  const adminGroupIDs = await new Promise((resolve, reject) => {
-    dynamodb.query(condition, (err, data) => {
-      if(err) {
-        res.statusCode = 500
-        res.json({error: 'Could not load AdminGroupIDs: ' + err.message})
-      } else {
-        if (data.Items) {
-          resolve(data.Items.map(item => item['group_id']))
-        } else {
-          resolve([])
-        }
-      }
-    })
-  })
 
-  let adminGroups = []
-  if (adminGroupIDs) {
-    adminGroups = await Promise.all(adminGroupIDs.map(async id => {
-      const getAdminGroupCondition = {
-        TableName: 'AttendanceAppGroupsTable-dev',
-        Key: {
-          "id": id
-        }
-      }
-      return await new Promise((resolve, reject) => {
-        dynamodb.get(getAdminGroupCondition, (err, data) => {
-          if(err) {
-            res.statusCode = 500
-            res.json({error: 'Could not load AdminGroup: ' + err.message})
-          } else {
-            if (data.Item) {
-              resolve(data.Item)
-            }
-          }
-        })
-      })
-    }))
+  let adminGroups
+  try {
+    adminGroups = await Group.batchGet(adminGroupIDs)
+  } catch (error) {
+    res.statusCode = 500
+    res.json(error)
   }
 
   // get general grooups

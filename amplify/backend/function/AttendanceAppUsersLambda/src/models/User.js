@@ -17,12 +17,26 @@ class User {
         }
       })
     })
-
     return users
   }
 
-  get() {
-
+  async get(id) {
+    const params = {
+      TableName: this.tableName,
+      Key: {
+        id: id
+      }
+    }
+    const user = await new Promise((resolve, reject) => {
+      this.dynamodb.get(params, (err, data) => {
+        if(err) {
+          reject({error: 'Could not get user: ' + err.message})
+        } else {
+          resolve(data.Item)
+        }
+      })
+    })
+    return user
   }
 }
 
