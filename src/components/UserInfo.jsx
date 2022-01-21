@@ -3,7 +3,8 @@ import { useParams, Link } from 'react-router-dom'
 import { Box, Card, CardContent, List, ListItem, Avatar, Typography, Divider, Table, TableHead, TableBody, TableRow, TableCell } from  '@mui/material'
 import UsersService from '../services/UsersService'
 
-export const UserInfo = () => {
+export const UserInfo = (props) => {
+  const { isAdmin } = props
   const { id } = useParams()
   const [user, setUser] = useState(null)
 
@@ -60,55 +61,57 @@ export const UserInfo = () => {
             </List>
           </CardContent>
         </Card>
-        <Card sx={{ margin: '20px' }}>
-          <CardContent>
-            <List>
-              <ListItem>
-                <h3>所属部署</h3>
-              </ListItem>
-              <ListItem>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>
-                        部署名
-                      </TableCell>
-                      <TableCell>
-                        部署内の役割
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {user?.adminGroups.map(group => (
+        {isAdmin &&
+          <Card sx={{ margin: '20px' }}>
+            <CardContent>
+              <List>
+                <ListItem>
+                  <h3>所属部署</h3>
+                </ListItem>
+                <ListItem>
+                  <Table>
+                    <TableHead>
                       <TableRow>
                         <TableCell>
-                          <Link to={'/groups/'+group.id}>
-                            {group.name}
-                          </Link>
+                          部署名
                         </TableCell>
                         <TableCell>
-                          承認者
+                          部署内の役割
                         </TableCell>
                       </TableRow>
-                    ))}
-                    {user?.generalGroups.map(group => (
-                      <TableRow>
-                        <TableCell>
-                          <Link to={'/groups/'+group.id}>
-                            {group.name}
-                          </Link>
-                        </TableCell>
-                        <TableCell>
-                          一般社員
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </ListItem>
-            </List>
-          </CardContent>
-        </Card>
+                    </TableHead>
+                    <TableBody>
+                      {user?.adminGroups.map(group => (
+                        <TableRow>
+                          <TableCell>
+                            <Link to={'/groups/'+group.id}>
+                              {group.name}
+                            </Link>
+                          </TableCell>
+                          <TableCell>
+                            承認者
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {user?.generalGroups.map(group => (
+                        <TableRow>
+                          <TableCell>
+                            <Link to={'/groups/'+group.id}>
+                              {group.name}
+                            </Link>
+                          </TableCell>
+                          <TableCell>
+                            一般社員
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </ListItem>
+              </List>
+            </CardContent>
+          </Card>
+        }
       </Box>
     </div>
   )

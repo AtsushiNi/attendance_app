@@ -4,7 +4,8 @@ import { Box, Card, CardContent, List, ListItem, Typography, Divider, Table, Tab
 import GroupsService from '../services/GroupsService'
 import { GroupForm } from '../components/GroupForm'
 
-export const GroupInfo = () => {
+export const GroupInfo = (props) => {
+  const { isAdmin } = props
   const { id } = useParams()
   const [group, setGroup] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -39,7 +40,7 @@ export const GroupInfo = () => {
         <h3 style={{marginRight: 'auto', display: 'inline-block'}}>部署詳細</h3>
         <Button
           variant='contained'
-          style={{height: '40px', width: '140px', marginTop: 'auto', marginBottom: 'auto'}}
+          style={{height: '40px', width: '140px', marginTop: 'auto', marginBottom: 'auto', visibility: (isAdmin? 'visible' : 'hidden')}}
           onClick={() => setIsModalOpen(true)}
         >
           編集する

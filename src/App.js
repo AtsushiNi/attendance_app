@@ -35,15 +35,19 @@ function App(props) {
             <Routes>
               <Route path='/mypage/users' element={<MyPageUserTable currentUser={currentUser}/>}>
               </Route>
-              <Route path='/mypage/groups' element={<MyPageGroupTable currentUser={currentUser}/>}>
+              <Route path='/mypage/users/:id' element={<UserInfo isAdmin={false} />}>
+              </Route>
+              <Route path='/mypage/groups' element={<MyPageGroupTable currentUser={currentUser} />}>
+              </Route>
+              <Route path='/mypage/groups/:id' element={<GroupInfo isAdmin={false} />}>
               </Route>
               <Route path='/groups' element={<GroupTable />}>
               </Route>
-              <Route path='/groups/:id' element={<GroupInfo />}>
+              <Route path='/groups/:id' element={<GroupInfo isAdmin={true} />}>
               </Route>
               <Route path='/users' element={<UserTable />}>
               </Route>
-              <Route path='/users/:id' element={<UserInfo />}>
+              <Route path='/users/:id' element={<UserInfo isAdmin={true} />}>
               </Route>
               <Route path='/settings'>
               </Route>
