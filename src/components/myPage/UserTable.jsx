@@ -3,13 +3,19 @@ import { Link } from 'react-router-dom'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow,  Paper, Box } from '@mui/material'
 import UsersService from '../../services/UsersService'
 
-export const UserTable = () => {
+export const UserTable = (props) => {
+  const { currentUser } = props
   const [users, setUsers] = useState([])
 
   useEffect(async () => {
-    const userList = await UsersService.getUsers()
-    setUsers(userList)
-  }, [])
+    const func = async () => {
+      const userList = await UsersService.getMyPageUsers(currentUser.id)
+      setUsers(userList)
+    }
+    if(currentUser) {
+      func()
+    }
+  }, [currentUser])
 
   return (
     <div style={{ margin: 30 }}>
@@ -35,7 +41,7 @@ export const UserTable = () => {
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
                   <TableCell component='th' scope='row'>
-                    <Link to={'/users/'+user.id}>
+                    <Link to={'/myPage/users/'+user.id}>
                       {user.id}
                     </Link>
                   </TableCell>

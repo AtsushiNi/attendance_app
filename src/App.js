@@ -1,8 +1,9 @@
-import React from 'react'
-import { Authenticator } from '@aws-amplify/ui-react'
+import React, { useEffect, useState } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import '@aws-amplify/ui-react/styles.css'
 import './styles/App.scss'
+
+import UsersService from './services/UsersService'
 
 import { Header } from './components/Header'
 import { Sidebar} from './components/Sidebar'
@@ -13,18 +14,28 @@ import { UserInfo } from './components/UserInfo'
 import { GroupTable as MyPageGroupTable } from './components/myPage/GroupTable'
 import { UserTable as MyPageUserTable } from './components/myPage/UserTable'
 
-function App() {
+function App(props) {
+  const { signOut, currentUserInfo } = props
+  const [currentUser, setCurrentUser] = useState(null)
+  useEffect(() => {
+    const func = async () => {
+      const user = await UsersService.getByEmail(currentUserInfo.attributes.email)
+      setCurrentUser(user)
+    }
+    if(currentUserInfo) {
+      func()
+    }
+  }, [currentUserInfo])
+
   return (
-    <Authenticator variation='modal'>
-      {({signOut, user }) => (
         <div className='App'>
-          <Sidebar currentUser={user}/>
+          <Sidebar currentUser={currentUser}/>
           <main>
             <Header signOut={signOut} />
             <Routes>
-              <Route path='/mypage/users' element={<MyPageUserTable />}>
+              <Route path='/mypage/users' element={<MyPageUserTable currentUser={currentUser}/>}>
               </Route>
-              <Route path='/mypage/groups' element={<MyPageGroupTable />}>
+              <Route path='/mypage/groups' element={<MyPageGroupTable currentUser={currentUser}/>}>
               </Route>
               <Route path='/groups' element={<GroupTable />}>
               </Route>
@@ -39,8 +50,6 @@ function App() {
             </Routes>
           </main>
         </div>
-      )}
-    </Authenticator>
   );
 }
 

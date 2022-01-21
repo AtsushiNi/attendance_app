@@ -2,20 +2,24 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow,  Paper, Box, Button } from '@mui/material'
 import GroupsService from '../../services/GroupsService'
+import UsersService from '../../services/UsersService'
 import { GroupForm } from '../../components/GroupForm'
 
-export const GroupTable = () => {
-
+export const GroupTable = (props) => {
+  const { currentUser } = props
   const [groups, setGroups] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     const func = async () => {
-      const groupList = await GroupsService.getGroups()
+      let groupList = await UsersService.getMyPageGroups(currentUser.id)
+      groupList = groupList.adminGroups.concat(groupList.generalGroups)
       setGroups(groupList)
     }
-    func()
-  }, [])
+    if(currentUser) {
+      func()
+    }
+  }, [currentUser])
 
   const handleSubmit = async (groupName, adminIDs, generalIDs) => {
     await GroupsService.create({
@@ -55,7 +59,7 @@ export const GroupTable = () => {
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
                   <TableCell component='th' scope='row'>
-                    <Link to={'/groups/'+group.id}>
+                    <Link to={'/myPage/groups/'+group.id}>
                       {group.id}
                     </Link>
                   </TableCell>

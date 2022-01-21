@@ -80,6 +80,43 @@ app.get('/users/:id',  async function(req, res) {
   }
 });
 
+/*****************************************
+ * HTTP Get method for get single object *
+ *****************************************/
+
+app.get('/users/:id/users',  async function(req, res) {
+  const id = parseInt(req.params.id)
+
+  let adminGroupIDs
+  let generalGroupIDs
+  try {
+    adminGroupIDs = await UserGroupAdmin.getGroupIDsByUserId(id)
+    generalGroupIDs = await UserGroupGeneral.getGroupIDsByUserId(id)
+  } catch (error) {
+    res.statusCode = 500
+    res.json(error)
+  }
+  const groupIDs = Array.from(new Set(adminGroupIDs.concat(generalGroupIDs)))
+
+  let adminUserIDs = await Promise.all(groupIDs.map(async id => {
+    return await UserGroupAdmin.getUserIDsByGroupId(id)
+  }))
+  adminUserIDs = Array.from(new Set(adminUserIDs.flat()))
+  let generalUserIDs = await Promise.all(groupIDs.map(async id => {
+    return await UserGroupGeneral.getUserIDsByGroupId(id)
+  }))
+  generalUserIDs = Array.from(new Set(generalUserIDs.flat()))
+
+  const userIDs = Array.from(new Set(adminUserIDs.concat(generalUserIDs)))
+  try {
+    const users = await User.batchGet(userIDs)
+    res.json(users)
+  } catch (error) {
+    res.statusCode = 500
+    res.json(error)
+  }
+});
+
 /********************************
  * HTTP Get method for groups in single user
  ********************************/

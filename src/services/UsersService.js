@@ -11,6 +11,22 @@ class UsersService {
     return response
   }
 
+  async getMyPageUsers(id) {
+    const path = '/users/' + id + '/users'
+
+    const response = await API.get(apiName, path, {})
+
+    return response
+  }
+
+  async getMyPageGroups(id) {
+    const path = '/users/' + id + '/groups'
+
+    const response = await API.get(apiName, path, {})
+
+    return response
+  }
+
   async getUser(id) {
     const path = '/users/' + id
     const response = await API.get(apiName, path, {})

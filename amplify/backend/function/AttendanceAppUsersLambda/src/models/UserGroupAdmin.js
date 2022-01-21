@@ -24,6 +24,37 @@ class UserGroupAdmin {
     })
     return groupIDs
   }
+
+  async getUserIDsByGroupId(groupID) {
+    let relations
+    try {
+      relations = await this.queryByGroupId(groupID)
+    } catch(error) {
+      throw(error)
+    }
+    return relations.map(relation => relation.user_id)
+  }
+
+  async queryByGroupId(groupID) {
+    const params = {
+      TableName: this.tableName,
+      IndexName: 'group_id',
+      KeyConditionExpression: "group_id = :groupID",
+      ExpressionAttributeValues: {
+        ":groupID": groupID
+      }
+    }
+    const relations = await new Promise((resolve, reject) => {
+      this.dynamodb.query(params, (err, data) => {
+        if(err) {
+          reject({error: ('Could not query adminGroups: ' + err.message)})
+        } else {
+          resolve(data.Items)
+        }
+      })
+    })
+    return relations
+  }
 }
 
 module.exports = UserGroupAdmin

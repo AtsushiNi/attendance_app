@@ -15,10 +15,9 @@ import {
 } from 'react-icons/fa'
 import { Link, useLocation } from 'react-router-dom'
 import { MdGroup } from 'react-icons/md'
-import UsersService from '../services/UsersService'
 
 export const Sidebar = (props) => {
-  const [currentUser, setCurrentUser] = useState(null)
+  const { currentUser } = props
   const params = useLocation()
   const getStyle = (id) => {
     if(params.pathname.indexOf(id) !== -1)
@@ -31,17 +30,6 @@ export const Sidebar = (props) => {
       return({})
     }
   }
-
-  useEffect(() => {
-    const func = async () => {
-      const userInfo = props.currentUser
-      const user = await UsersService.getByEmail(userInfo.attributes.email)
-      setCurrentUser(user)
-    }
-    if(props.currentUser) {
-      func()
-    }
-  }, [props])
 
   return (
     <ProSidebar>
