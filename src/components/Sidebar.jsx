@@ -67,8 +67,14 @@ export const Sidebar = (props) => {
             <MenuItem>打刻</MenuItem>
             <MenuItem>出勤簿</MenuItem>
             <MenuItem>申請</MenuItem>
-            <MenuItem>メンバー</MenuItem>
-            <MenuItem>所属部署</MenuItem>
+            <MenuItem style={getStyle('myPage/users')}>
+              メンバー
+              <Link to='/myPage/users' />
+            </MenuItem>
+            <MenuItem style={getStyle('myPage/groups')}>
+              所属部署
+              <Link to='/myPage/groups' />
+            </MenuItem>
           </SubMenu>
           <MenuItem icon={<FaUserCheck />} style={getStyle('application')} id='application'>
             承認

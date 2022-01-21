@@ -10,6 +10,8 @@ import { GroupTable } from './components/GroupTable'
 import { GroupInfo } from './components/GroupInfo'
 import { UserTable } from './components/UserTable'
 import { UserInfo } from './components/UserInfo'
+import { GroupTable as MyPageGroupTable } from './components/myPage/GroupTable'
+import { UserTable as MyPageUserTable } from './components/myPage/UserTable'
 
 function App() {
   return (
@@ -20,7 +22,9 @@ function App() {
           <main>
             <Header signOut={signOut} />
             <Routes>
-              <Route path='/mypage'>
+              <Route path='/mypage/users' element={<MyPageUserTable />}>
+              </Route>
+              <Route path='/mypage/groups' element={<MyPageGroupTable />}>
               </Route>
               <Route path='/groups' element={<GroupTable />}>
               </Route>
