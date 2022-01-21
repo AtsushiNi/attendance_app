@@ -43,13 +43,25 @@ const UserGroupGeneral = new useUserGroupGeneral(dynamodb)
  * HTTP Get method for list objects *
  ********************************/
 app.get('/users', async function(req, res) {
-  try {
-    const users = await User.scan()
+  if(!req.query.email){
+    try {
+      const users = await User.scan()
 
-    res.json(users)
-  } catch (error) {
-    res.statusCode = 500
-    res.json(error)
+      res.json(users)
+    } catch (error) {
+      res.statusCode = 500
+      res.json(error)
+    }
+  } else {
+    const email = req.query.email
+    try {
+      const user = await User.getByEmail(email)
+
+      res.json(user)
+    } catch (error) {
+      res.statusCode = 500
+      res.json(error)
+    }
   }
 })
 

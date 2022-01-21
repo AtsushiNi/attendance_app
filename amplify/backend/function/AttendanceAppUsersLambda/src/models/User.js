@@ -38,6 +38,12 @@ class User {
     })
     return user
   }
+
+  async getByEmail(email) {
+    const users = await this.scan()
+    const user = users.find(user => user.e_mail === email)
+    return user
+  }
 }
 
 module.exports = User

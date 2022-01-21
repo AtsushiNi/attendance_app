@@ -18,6 +18,18 @@ class UsersService {
     return response[0]
   }
 
+  async getByEmail(email) {
+    const path = '/users'
+    const init = {
+      queryStringParameters: {
+        email: email
+      }
+    }
+    const response = await API.get(apiName, path, init)
+
+    return response
+  }
+
   async getUserWithGroups(id) {
     const getUserPath = '/users/' + id
     const userResponse = await API.get(apiName, getUserPath, {})
