@@ -13,6 +13,7 @@ import { UserTable } from './components/UserTable'
 import { UserInfo } from './components/UserInfo'
 import { GroupTable as MyPageGroupTable } from './components/myPage/GroupTable'
 import { UserTable as MyPageUserTable } from './components/myPage/UserTable'
+import { Stamping } from './components/myPage/Stamping'
 
 function App(props) {
   const { signOut, currentUserInfo } = props
@@ -33,24 +34,16 @@ function App(props) {
           <main>
             <Header signOut={signOut} />
             <Routes>
-              <Route path='/mypage/users' element={<MyPageUserTable currentUser={currentUser}/>}>
-              </Route>
-              <Route path='/mypage/users/:id' element={<UserInfo isAdmin={false} />}>
-              </Route>
-              <Route path='/mypage/groups' element={<MyPageGroupTable currentUser={currentUser} />}>
-              </Route>
-              <Route path='/mypage/groups/:id' element={<GroupInfo isAdmin={false} />}>
-              </Route>
-              <Route path='/groups' element={<GroupTable />}>
-              </Route>
-              <Route path='/groups/:id' element={<GroupInfo isAdmin={true} />}>
-              </Route>
-              <Route path='/users' element={<UserTable />}>
-              </Route>
-              <Route path='/users/:id' element={<UserInfo isAdmin={true} />}>
-              </Route>
-              <Route path='/settings'>
-              </Route>
+              <Route path='/mypage/stamping' element={<Stamping />} />
+              <Route path='/mypage/users' element={<MyPageUserTable currentUser={currentUser}/>} />
+              <Route path='/mypage/users/:id' element={<UserInfo isAdmin={false} />} />
+              <Route path='/mypage/groups' element={<MyPageGroupTable currentUser={currentUser} />} />
+              <Route path='/mypage/groups/:id' element={<GroupInfo isAdmin={false} />} />
+              <Route path='/groups' element={<GroupTable />} />
+              <Route path='/groups/:id' element={<GroupInfo isAdmin={true} />} />
+              <Route path='/users' element={<UserTable />} />
+              <Route path='/users/:id' element={<UserInfo isAdmin={true} />} />
+              <Route path='/settings' />
             </Routes>
           </main>
         </div>

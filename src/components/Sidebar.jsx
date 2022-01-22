@@ -52,16 +52,19 @@ export const Sidebar = (props) => {
       <SidebarContent>
         <Menu iconShape='square'>
           <SubMenu title='マイページ' icon={<FaHeart />}>
-            <MenuItem>打刻</MenuItem>
+            <MenuItem style={getStyle('mypage/stamping')}>
+              打刻
+              <Link to='/mypage/stamping' />
+            </MenuItem>
             <MenuItem>出勤簿</MenuItem>
             <MenuItem>申請</MenuItem>
-            <MenuItem style={getStyle('myPage/users')}>
+            <MenuItem style={getStyle('mypage/users')}>
               メンバー
-              <Link to='/myPage/users' />
+              <Link to='/mypage/users' />
             </MenuItem>
-            <MenuItem style={getStyle('myPage/groups')}>
+            <MenuItem style={getStyle('mypage/groups')}>
               所属部署
-              <Link to='/myPage/groups' />
+              <Link to='/mypage/groups' />
             </MenuItem>
           </SubMenu>
           <MenuItem icon={<FaUserCheck />} style={getStyle('application')} id='application'>

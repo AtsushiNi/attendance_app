@@ -43,6 +43,10 @@
     "AttendanceAppUserGroupAdminTable": {
       "service": "DynamoDB",
       "providerPlugin": "awscloudformation"
+    },
+    "AttendanceAppAttendancesTable": {
+      "service": "DynamoDB",
+      "providerPlugin": "awscloudformation"
     }
   },
   "function": {
