@@ -64,10 +64,21 @@ export type AmplifyDependentResourcesAttributes = {
             "Arn": "string",
             "Region": "string",
             "LambdaExecutionRole": "string"
+        },
+        "AttendanceAppAttendanceLambda": {
+            "Name": "string",
+            "Arn": "string",
+            "Region": "string",
+            "LambdaExecutionRole": "string"
         }
     },
     "api": {
         "AttendanceAppUsersApi": {
+            "RootUrl": "string",
+            "ApiName": "string",
+            "ApiId": "string"
+        },
+        "AttendanceAppAtteandanchAPI": {
             "RootUrl": "string",
             "ApiName": "string",
             "ApiId": "string"

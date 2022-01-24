@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "paths": {
+    "/attendances": {
+      "name": "/attendances",
+      "lambdaFunction": "AttendanceAppAttendanceLambda",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}

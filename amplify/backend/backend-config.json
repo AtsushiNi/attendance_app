@@ -73,6 +73,11 @@
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
+    },
+    "AttendanceAppAttendanceLambda": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
     }
   },
   "api": {
@@ -91,6 +96,20 @@
         {
           "category": "function",
           "resourceName": "AttendanceAppGroupsLambda",
+          "attributes": [
+            "Name",
+            "Arn"
+          ]
+        }
+      ]
+    },
+    "AttendanceAppAtteandanchAPI": {
+      "service": "API Gateway",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [
+        {
+          "category": "function",
+          "resourceName": "AttendanceAppAttendanceLambda",
           "attributes": [
             "Name",
             "Arn"

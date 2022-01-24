@@ -13,6 +13,9 @@
     },
     "AttendanceAppUsersApi": {
       "Type": "String"
+    },
+    "AttendanceAppAtteandanchAPI": {
+      "Type": "String"
     }
   },
   "Conditions": {
