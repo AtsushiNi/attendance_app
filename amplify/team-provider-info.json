@@ -19,15 +19,15 @@
       "function": {
         "AttendanceAppUsersLambda": {
           "deploymentBucketName": "amplify-attendanceapp-dev-235325-deployment",
-          "s3Key": "amplify-builds/AttendanceAppUsersLambda-6b53666a4f34374d3555-build.zip"
+          "s3Key": "amplify-builds/AttendanceAppUsersLambda-4c49695a3034476a6448-build.zip"
         },
         "AttendanceAppGroupsLambda": {
           "deploymentBucketName": "amplify-attendanceapp-dev-235325-deployment",
-          "s3Key": "amplify-builds/AttendanceAppGroupsLambda-714d3559693775613339-build.zip"
+          "s3Key": "amplify-builds/AttendanceAppGroupsLambda-676c7369724f34436f54-build.zip"
         },
         "AttendanceAppAttendanceLambda": {
           "deploymentBucketName": "amplify-attendanceapp-dev-235325-deployment",
-          "s3Key": "amplify-builds/AttendanceAppAttendanceLambda-4a614e63456a4a4a3578-build.zip"
+          "s3Key": "amplify-builds/AttendanceAppAttendanceLambda-5a58743736422f344843-build.zip"
         }
       }
     }

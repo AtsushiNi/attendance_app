@@ -34,7 +34,7 @@ function App(props) {
           <main>
             <Header signOut={signOut} />
             <Routes>
-              <Route path='/mypage/stamping' element={<Stamping />} />
+              <Route path='/mypage/stamping' element={<Stamping currentUser={currentUser} />} />
               <Route path='/mypage/users' element={<MyPageUserTable currentUser={currentUser}/>} />
               <Route path='/mypage/users/:id' element={<UserInfo isAdmin={false} />} />
               <Route path='/mypage/groups' element={<MyPageGroupTable currentUser={currentUser} />} />
