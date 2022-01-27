@@ -31,7 +31,7 @@ Class Application {
   Number approved_at
   Number rejected_at
   String status
-  String reason
+  String memo
 }
 
 Class UserGroupGeneral {
