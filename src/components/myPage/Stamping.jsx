@@ -18,7 +18,7 @@ export const Stamping = (props) => {
   }, [props])
 
   const handleStartWork = () => {
-    if (isShow) {
+    if (!isShow) {
       AttendanceService.startWork(new Date(), currentUser.id)
     } else {
       AttendanceService.startWork(time, currentUser.id)
@@ -26,7 +26,7 @@ export const Stamping = (props) => {
   }
 
   const handleFinishWork = () => {
-    if (isShow) {
+    if (!isShow) {
       AttendanceService.finishWork(new Date(), currentUser.id)
     } else {
       AttendanceService.finishWork(time, currentUser.id)

@@ -17,6 +17,15 @@ app.use(function(req, res, next) {
   next()
 });
 
+app.get('/attendances', async function(req, res) {
+  console.log(req.query.userID)
+  const userID = parseInt(req.query.userID)
+  const attendances = await scan()
+  const myAttendances = attendances.filter(a => a.user_id === userID)
+
+  res.json(myAttendances)
+})
+
 app.post('/attendances', async function(req, res) {
   const maxID = await getMaxID()
   try {

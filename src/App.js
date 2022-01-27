@@ -14,6 +14,7 @@ import { UserInfo } from './components/UserInfo'
 import { GroupTable as MyPageGroupTable } from './components/myPage/GroupTable'
 import { UserTable as MyPageUserTable } from './components/myPage/UserTable'
 import { Stamping } from './components/myPage/Stamping'
+import { AttendanceTable } from './components/myPage/AttendanceTable'
 
 function App(props) {
   const { signOut, currentUserInfo } = props
@@ -35,6 +36,7 @@ function App(props) {
             <Header signOut={signOut} />
             <Routes>
               <Route path='/mypage/stamping' element={<Stamping currentUser={currentUser} />} />
+              <Route path='/mypage/attendances' element={<AttendanceTable currentUser={currentUser}/>} />
               <Route path='/mypage/users' element={<MyPageUserTable currentUser={currentUser}/>} />
               <Route path='/mypage/users/:id' element={<UserInfo isAdmin={false} />} />
               <Route path='/mypage/groups' element={<MyPageGroupTable currentUser={currentUser} />} />

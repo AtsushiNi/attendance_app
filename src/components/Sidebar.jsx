@@ -56,7 +56,10 @@ export const Sidebar = (props) => {
               打刻
               <Link to='/mypage/stamping' />
             </MenuItem>
-            <MenuItem>出勤簿</MenuItem>
+            <MenuItem style={getStyle('mypage/attendances')}>
+              出勤簿
+              <Link to='/mypage/attendances' />
+            </MenuItem>
             <MenuItem>申請</MenuItem>
             <MenuItem style={getStyle('mypage/users')}>
               メンバー

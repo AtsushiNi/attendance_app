@@ -3,6 +3,18 @@ import { API } from 'aws-amplify'
 const apiName = 'AttendanceAppAtteandanchAPI'
 
 class AttendanceService {
+  async getAttendances(userID) {
+    const path = '/attendances'
+    const init = {
+      queryStringParameters: {
+        userID: userID
+      }
+    }
+    const response = await API.get(apiName, path, init)
+
+    return response
+  }
+
   async startWork(time, userID) {
     const path = '/attendances'
     const init = {
