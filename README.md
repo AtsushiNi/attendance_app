@@ -28,6 +28,9 @@ dynamoDBのベストプラクティスは難しいから、RDB的な設計にす
 
 ![sequence dialog](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/AtsushiNi/attendance_app/main/readme/ER_image.txt)
 
+### Attendanceモデルのstatus
+![sequence dialog](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/AtsushiNi/attendance_app/main/readme/attendance_statuses.txt)
+
 ## 使用したReactライブラリ
 - サイドバー：[react-pro-sidebar](https://github.com/azouaoui-med/react-pro-sidebar)
 - ヘッダー：[material-ui AppBar](https://mui.com/components/app-bar/)

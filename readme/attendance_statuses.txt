@@ -1,0 +1,8 @@
+@startuml
+
+[*] --> working: 出勤を打刻
+working --> unapproved: 退勤を打刻
+unapproved --> approved: 承認
+unapproved --> needCorrection: 修正依頼
+needCorrection --> unapproved: 修正
+@enduml
