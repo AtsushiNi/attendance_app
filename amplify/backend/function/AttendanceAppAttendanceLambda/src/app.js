@@ -54,8 +54,9 @@ app.put('/attendances/end', async function(req, res) {
   const params = {
     TableName: 'AttendanceAppAttendancesTable-dev',
     Key: { id: working.id },
-    UpdateExpression: 'set end_at = :endAt',
-    ExpressionAttributeValues:{ ':endAt': (new Date(req.body.endAt)).getTime() }
+    UpdateExpression: 'set end_at = :endAt, #s = :status',
+    ExpressionAttributeNames: { '#s': 'status' },
+    ExpressionAttributeValues:{ ':endAt': (new Date(req.body.endAt)).getTime(), ':status': 'unapproved' }
   }
   try {
     await new Promise((resolve, reject) => {
