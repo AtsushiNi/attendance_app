@@ -1,0 +1,25 @@
+{
+  "resourceName": "AttendanceAppReviewersTable",
+  "tableName": "AttendanceAppReviewersTable",
+  "partitionKey": {
+    "fieldName": "id",
+    "fieldType": "number"
+  },
+  "gsi": [
+    {
+      "name": "user_id",
+      "partitionKey": {
+        "fieldName": "user_id",
+        "fieldType": "number"
+      }
+    },
+    {
+      "name": "application_id",
+      "partitionKey": {
+        "fieldName": "application_id",
+        "fieldType": "number"
+      }
+    }
+  ],
+  "triggerFunctions": []
+}

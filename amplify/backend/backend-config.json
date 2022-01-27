@@ -47,6 +47,14 @@
     "AttendanceAppAttendancesTable": {
       "service": "DynamoDB",
       "providerPlugin": "awscloudformation"
+    },
+    "AttendanceAppApplicationsTable": {
+      "service": "DynamoDB",
+      "providerPlugin": "awscloudformation"
+    },
+    "AttendanceAppReviewersTable": {
+      "service": "DynamoDB",
+      "providerPlugin": "awscloudformation"
     }
   },
   "function": {

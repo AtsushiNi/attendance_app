@@ -23,6 +23,7 @@ Class Attendance {
 Class Application {
   Number id
   String type
+  Number approved_user_id
   Number before_start_at
   Number before_end_at
   Number after_start_at
@@ -49,6 +50,14 @@ Class UserGroupAdmin {
 }
 User "1" -- "n" UserGroupAdmin
 UserGroupAdmin "n" -- "1" Group
+
+Class Reviewer {
+ Number id
+ Number user_id
+ Number application_id
+}
+User "1" -- "n" Reviewer
+Reviewer "n" -- "1" Application
 
 User "1" -- "n" Attendance
 Attendance "1" -- "n" Application
