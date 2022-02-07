@@ -1,6 +1,9 @@
 # attendance_app
 AWSで作ってみた勤怠管理アプリ
 
+# ドメイン
+https://main.d333bcja5zhzv4.amplifyapp.com/
+
 ## アーキテクチャ
 - AWSを使ったサーバーレスWebアプリ
 - 簡単にしたいのでAPI Gatewayとlambdaを使用
