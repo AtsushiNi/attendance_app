@@ -2,6 +2,11 @@ const AWS = require('aws-sdk')
 var awsServerlessExpressMiddleware = require('aws-serverless-express/middleware')
 var bodyParser = require('body-parser')
 var express = require('express')
+const useAttendance = require('./models/Attendance')
+const useApplication = require('./moodels/Application')
+const useGroup = require('./models/Group')
+const useUser = require('./models/User')
+const useReviewer = require('./models/Reviewer')
 
 AWS.config.update({ region: process.env.TABLE_REGION });
 
@@ -16,6 +21,13 @@ app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Headers", "*")
   next()
 });
+
+// models
+const Attendance = new useAttendance(dynamodb)
+const Application = new useApplication(dynamodb)
+const Group = new useGroup(dynamodb)
+const User = new useUser(dynamodb)
+const Reviewer = new useReviewer(dynamodb)
 
 app.get('/attendances', async function(req, res) {
   console.log(req.query.userID)
@@ -65,7 +77,7 @@ app.put('/attendances/end', async function(req, res) {
     Key: { id: working.id },
     UpdateExpression: 'set end_at = :endAt, #s = :status',
     ExpressionAttributeNames: { '#s': 'status' },
-    ExpressionAttributeValues:{ ':endAt': (new Date(req.body.endAt)).getTime(), ':status': 'unapproved' }
+    ExpressionAttributeValues:{ ':endAt': (new Date(req.body.endAt)).getTime(), ':status': 'finished' }
   }
   try {
     await new Promise((resolve, reject) => {
@@ -82,6 +94,31 @@ app.put('/attendances/end', async function(req, res) {
     res.statusCode = 500
     res.json(error)
   }
+})
+
+app.post('/attendances/:id/apply', async function(req, res) {
+  const id = parseInt(req.params.id)
+  const userID = parseInt(req.body.userID)
+
+  // update attendance
+  await Attendance.updateStatus(id, 'unapproved')
+
+  const attendance = await Attendance.get(id)
+
+  // create application
+  const createParams = {
+    type: 'create',
+    afterStartAt: attendance.start_at,
+    afterEndAt: attendance.end_at,
+    statusParam: 'unapproved',
+    memo: ''
+  }
+  const applicationID = await Application.create(createParams)
+
+  // create reviewers
+  const groupIDs = await Group.listIDs(userID)
+  const adminIDs = await User.listIDsByGroupIDs(groupIDs)
+  await Reviewer.batchCreate(adminIDs, applicationID)
 })
 
 const getMaxID = async () => {

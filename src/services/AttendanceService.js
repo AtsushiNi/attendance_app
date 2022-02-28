@@ -42,6 +42,18 @@ class AttendanceService {
 
     return response
   }
+
+  async apply(id, userID) {
+    const path = '/attendances/' + id + '/apply'
+    const init = {
+      body: {
+        userID: userID
+      }
+    }
+    const response = await API.post(apiName, path, init)
+
+    return response
+  }
 }
 
 export default new AttendanceService()
